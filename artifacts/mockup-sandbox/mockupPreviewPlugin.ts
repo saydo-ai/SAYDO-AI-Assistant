@@ -1,6 +1,6 @@
 import { mkdirSync, writeFileSync } from "fs";
+import { readdir } from "node:fs/promises";
 import path from "path";
-import glob from "fast-glob";
 import chokidar from "chokidar";
 import type { FSWatcher } from "chokidar";
 import type { Plugin } from "vite";
@@ -39,16 +39,47 @@ export function mockupPreviewPlugin(): Plugin {
       .every((segment) => !segment.startsWith("_"));
   }
 
-  async function discoverComponents(): Promise<Array<DiscoveredComponent>> {
-    const files = await glob(`${MOCKUPS_DIR}/**/*.tsx`, {
-      cwd: root,
-      ignore: ["**/_*/**", "**/_*.tsx"],
-    });
+  async function findMockupFiles(directory: string): Promise<Array<string>> {
+    const pendingDirectories = [directory];
+    const files: Array<string> = [];
 
-    return files.map((f) => ({
-      globKey: "./" + f.slice("src/".length),
-      importPath: path.posix.relative("src/.generated", f),
-    }));
+    while (pendingDirectories.length > 0) {
+      const currentDirectory = pendingDirectories.pop()!;
+      const entries = await readdir(currentDirectory, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (entry.name.startsWith("_")) {
+          continue;
+        }
+
+        const absolutePath = path.join(currentDirectory, entry.name);
+        if (entry.isDirectory()) {
+          pendingDirectories.push(absolutePath);
+        } else if (entry.isFile() && entry.name.endsWith(".tsx")) {
+          files.push(absolutePath);
+        }
+      }
+    }
+
+    return files;
+  }
+
+  async function discoverComponents(): Promise<Array<DiscoveredComponent>> {
+    const mockupsDir = getMockupsAbsDir();
+    mkdirSync(mockupsDir, { recursive: true });
+    const files = (await findMockupFiles(mockupsDir)).sort();
+
+    return files.map((absolutePath) => {
+      const filePath = path
+        .relative(root, absolutePath)
+        .split(path.sep)
+        .join("/");
+
+      return {
+        globKey: "./" + filePath.slice("src/".length),
+        importPath: path.posix.relative("src/.generated", filePath),
+      };
+    });
   }
 
   function generateSource(components: Array<DiscoveredComponent>): string {

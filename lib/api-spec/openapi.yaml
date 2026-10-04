@@ -12,6 +12,7 @@ tags:
     description: Health operations
 paths:
   /healthz:
+
     get:
       operationId: healthCheck
       tags: [health]
@@ -23,7 +24,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthStatus"
+                $ref: 
+              
+              "#/components/schemas/HealthStatus"
+  /actions/plan:
+      post:
+            operationId: planAction
+                  summary: Plan an action
+                  description: Converts a user request into a proposed action
+                  requestBody:
+                    required: true
+                            content:
+                       application/json:
+                       schema:
+                       $ref: "#/components/schemas/ActionRequest"
+                       responses:
+                    "200":
+                    
+                    
 components:
   schemas:
     HealthStatus:
@@ -33,4 +51,16 @@ components:
           type: string
       required:
         - status
+    ActionRequest:
+    type: object
+    properties:
+      text:
+      type: string
+    required:
+      - text
+      
+      
+    
+
+        
 
