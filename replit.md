@@ -1,4 +1,4 @@
-# [Project name]
+# SAYDO
 
 _Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
 
@@ -22,19 +22,27 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/saydo/` — MVP interface and architecture overview
+- `artifacts/api-server/` — shared API service (not used by the demo flow)
+- `lib/api-spec/openapi.yaml` — shared API contract
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The initial request-to-action flow is a frontend-only simulation; it does not call an AI model or external service.
+- Keep the review/approval boundary explicit before any future action execution.
+- Do not connect external accounts, request sensitive permissions, or add paid services without the user's confirmation.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Users can enter a natural-language request, review a proposed action, and see a simulated outcome.
+- The architecture overview explains request → intent parsing → action planning → approval gate → connector execution.
+- No real external action is executed in the MVP.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the MVP architecture and interface simple.
+- Do not add paid services or make purchases.
+- Ask for confirmation before connecting external accounts or requesting sensitive permissions.
 
 ## Gotchas
 

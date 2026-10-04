@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "SAYDO"
+description = "SAYDO is an AI-powered assistant interface that turns natural-language requests into clear, reviewable actions across digital services. This MVP demonstrates request understanding, action previews, and user approval using simulated services only."
+version = "1.0.0"
+id = "artifacts/saydo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19486
+
+[services.development]
+run = "pnpm --filter @workspace/saydo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/saydo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/saydo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19486"
+BASE_PATH = "/"
