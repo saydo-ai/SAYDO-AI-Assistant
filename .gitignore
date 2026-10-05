@@ -47,3 +47,12 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+# SAYDO - secrets and environment variables
+.env
+.env.*
+!.env.example
+
+# Local secrets and credentials
+*.key
+*.pem
+secrets/
